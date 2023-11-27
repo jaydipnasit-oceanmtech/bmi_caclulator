@@ -2,7 +2,6 @@ import 'package:bmi_caclulator/features/bmi_count/presentation/cubit/emi_count_c
 import 'package:bmi_caclulator/features/bmi_count/presentation/view/bmi_calculator/emi_calculator_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class EmiCalculatorScreen extends StatefulWidget {
   const EmiCalculatorScreen({super.key});
@@ -20,12 +19,10 @@ class _EmiCalculatorScreenState extends EmiCalculatorWidget {
         bloc: emiCountCubit,
         builder: (context, state) {
           if (state is EmiCountLoadedState) {
-            return Padding(
-              padding: const EdgeInsets.all(5.0),
+            return SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 30.h),
                   loanAmoutWidget(state: state),
                 ],
               ),

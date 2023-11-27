@@ -9,40 +9,56 @@ class EmiCountCubit extends Cubit<EmiCountState> {
       : super(
           EmiCountLoadedState(
             totalInterest: 0,
+            checkMonthYear: true,
             totalPayment: 0,
+            loanTenuresMonthSlider: 120,
+            loanTenuresYearSlider: 10,
             piePrincipalLoanAmount: 0,
             emi: 0,
             pieInterest: 0,
-            yearAndMonthIndex: 0,
+            homeSliderValue: 10,
+            interestRateSliderValue: 10,
           ),
         );
-  TextEditingController homeLoanController = TextEditingController(text: "500000");
-  TextEditingController interestRateController = TextEditingController(text: "5");
-  TextEditingController loanTenureController = TextEditingController(text: "10");
+  TextEditingController homeLoanController = TextEditingController(text: "5000000");
+  TextEditingController interestRateController = TextEditingController(text: "10");
+  TextEditingController loanTenureController = TextEditingController(text: "15");
   double emiCount = 0.0;
 
   void yearAndMonthSelect({
     required EmiCountLoadedState state,
-    required int yearAndMonthIndex,
+    required bool check,
+    required bool checkTextFieldValue,
     required String value,
   }) {
-    double month = 0;
-    double year = 0;
-    year = double.parse(value);
-    month = double.parse(value) * 12;
-    loanTenureController = TextEditingController(
-      text: yearAndMonthIndex == 0
-          ? year <= 30 && year >= 0
-              ? value
-              : (year / 12).toStringAsFixed(1)
-          : month <= 360 && month >= 0
-              ? (month).toStringAsFixed(1)
-              : value,
-    );
+    double year = state.loanTenuresYearSlider;
+    double month = state.loanTenuresMonthSlider;
+    String textValue = value;
+    if (check) {
+      year = 0;
+      if (checkTextFieldValue) {
+        year = (double.parse(textValue));
+        loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
+      } else {
+        year = (double.parse(textValue) / 12);
+        loanTenureController = TextEditingController(text: year.toStringAsFixed(1));
+      }
+    } else {
+      month = 0;
+      if (checkTextFieldValue) {
+        month = (double.parse(textValue));
+        loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
+      } else {
+        month = double.parse(textValue) * 12;
+        loanTenureController = TextEditingController(text: month.toStringAsFixed(0));
+      }
+    }
+
     emit(
       state.copyWith(
-        yearAndMonthIndex: yearAndMonthIndex,
-        loanTenuresMonthSlider: yearAndMonthIndex == 0 ? year.toDouble() : month.toDouble(),
+        loanTenuresYearSlider: year,
+        loanTenuresMonthSlider: month,
+        checkMonthYear: check,
         random: Random().nextDouble(),
       ),
     );
@@ -53,12 +69,12 @@ class EmiCountCubit extends Cubit<EmiCountState> {
     required int principal,
     required double interestRate,
     required double tenure,
-    required int index,
+
   }) {
     var loadedState = state as EmiCountLoadedState;
     double monthlyInterestRate = (interestRate / 12) / 100;
     double year = 0;
-    if (index == 0) {
+    if (loadedState.checkMonthYear == true) {
       year = (tenure * 12);
     } else {
       year = tenure;
@@ -107,22 +123,6 @@ class EmiCountCubit extends Cubit<EmiCountState> {
     emit(
       state.copyWith(
         interestRateSliderValue: double.parse(interestRateSlider),
-        random: Random().nextDouble(),
-      ),
-    );
-  }
-
-//LoanTenureSlider
-  void loanTenureMethod({
-    required EmiCountLoadedState state,
-    required double loanTenuresMonthSliderValues,
-  }) {
-    int loanMonth = 0;
-    loanMonth = loanTenuresMonthSliderValues ~/ 1;
-    loanTenureController = TextEditingController(text: "$loanMonth");
-    emit(
-      state.copyWith(
-        loanTenuresMonthSlider: loanTenuresMonthSliderValues,
         random: Random().nextDouble(),
       ),
     );

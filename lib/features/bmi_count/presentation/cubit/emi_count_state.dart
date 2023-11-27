@@ -21,10 +21,11 @@ class EmiCountLoadingState extends EmiCountState {
 
 class EmiCountLoadedState extends EmiCountState {
   double? random;
-  double? homeSliderValue;
-  double? interestRateSliderValue;
-  double? loanTenuresMonthSlider;
-  final int yearAndMonthIndex;
+  final bool checkMonthYear;
+  final double homeSliderValue;
+  final double interestRateSliderValue;
+  final double loanTenuresYearSlider;
+  final double loanTenuresMonthSlider;
   final double emi;
   final double piePrincipalLoanAmount;
   final double pieInterest;
@@ -33,19 +34,19 @@ class EmiCountLoadedState extends EmiCountState {
 
   EmiCountLoadedState({
     this.random,
-    this.homeSliderValue,
-    this.interestRateSliderValue,
-    this.loanTenuresMonthSlider,
+    required this.homeSliderValue,
+    required this.interestRateSliderValue,
+    required this.loanTenuresMonthSlider,
+    required this.loanTenuresYearSlider,
+    required this.checkMonthYear,
     required this.pieInterest,
     required this.totalInterest,
     required this.totalPayment,
-    required this.yearAndMonthIndex,
     required this.piePrincipalLoanAmount,
     required this.emi,
   });
 
   EmiCountLoadedState copyWith({
-    int? yearAndMonthIndex,
     double? totalInterest,
     double? piePrincipalLoanAmount,
     double? totalPayment,
@@ -54,7 +55,9 @@ class EmiCountLoadedState extends EmiCountState {
     double? random,
     double? emi,
     double? pieInterest,
+    double? loanTenuresYearSlider,
     double? loanTenuresMonthSlider,
+    bool? checkMonthYear,
   }) {
     return EmiCountLoadedState(
       emi: emi ?? this.emi,
@@ -63,10 +66,11 @@ class EmiCountLoadedState extends EmiCountState {
       totalInterest: totalInterest ?? this.totalInterest,
       pieInterest: piePrincipalLoanAmount ?? this.pieInterest,
       homeSliderValue: homeSliderValue ?? this.homeSliderValue,
-      yearAndMonthIndex: yearAndMonthIndex ?? this.yearAndMonthIndex,
       piePrincipalLoanAmount: pieInterest ?? this.piePrincipalLoanAmount,
       interestRateSliderValue: interestRateSliderValue ?? this.interestRateSliderValue,
+      loanTenuresYearSlider: loanTenuresYearSlider ?? this.loanTenuresYearSlider,
       loanTenuresMonthSlider: loanTenuresMonthSlider ?? this.loanTenuresMonthSlider,
+      checkMonthYear: checkMonthYear ?? this.checkMonthYear,
     );
   }
 
@@ -74,13 +78,13 @@ class EmiCountLoadedState extends EmiCountState {
   List<Object?> get props => [
         random,
         emi,
-        yearAndMonthIndex,
         homeSliderValue,
         interestRateSliderValue,
-        loanTenuresMonthSlider,
         totalInterest,
         piePrincipalLoanAmount,
         totalPayment,
+        loanTenuresMonthSlider,
+        loanTenuresYearSlider,
         pieInterest,
       ];
 }

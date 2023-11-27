@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:bmi_caclulator/features/bmi_count/presentation/view/bmi_calculator/emi_calculator_screen.dart';
+import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
   late EmiCountCubit emiCountCubit;
-  int tenureIndex = 0;
 
   @override
   void initState() {
@@ -29,7 +29,6 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
       principal: int.parse(emiCountCubit.homeLoanController.text),
       interestRate: double.parse(emiCountCubit.interestRateController.text),
       tenure: double.parse(emiCountCubit.loanTenureController.text),
-      index: tenureIndex,
     );
   }
 
@@ -41,238 +40,278 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
     return commonContainer(
       horizontalPadding: 0,
       withOpacity: 0.3,
-      height: ScreenUtil().screenHeight * 0.89,
-      text: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 10.h),
-            commonTextfile(
-              onSubmitted: (value) {
-                emiCountCubit.homeLoanAmountSlider(
-                    state: state, homeLoanSliderValue: double.parse(value), isCheck: true);
-                updateSliderValue();
-              },
-              state: state,
-              controller: emiCountCubit.homeLoanController,
-              hinttext: "Ex 1000",
-              text: "Home Loan Amount",
-              suffixWidget: commonContainer(
-                width: 40.w,
-                height: 35.h,
-                horizontalPadding: 0.w,
-                withOpacity: 0.2,
-                borderColor: Colors.black,
-                text: Text(
-                  "₹",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
-                ),
+      borderColor: Colors.black,
+      text: Column(
+        children: [
+          SizedBox(height: 40.h),
+          commonTextfile(
+            onSubmitted: (value) {
+              emiCountCubit.homeLoanAmountSlider(
+                state: state,
+                homeLoanSliderValue: double.parse(value),
+                isCheck: true,
+              );
+              updateSliderValue();
+            },
+            state: state,
+            controller: emiCountCubit.homeLoanController,
+            hinttext: "Ex 1000",
+            text: "Home Loan Amount",
+            suffixWidget: commonContainer(
+              width: 40.w,
+              height: 35.h,
+              horizontalPadding: 0.w,
+              withOpacity: 0.2,
+              borderColor: Colors.black,
+              text: Text(
+                "₹",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
               ),
             ),
-            sliderWidget(
-              state: state,
-              onChanged: (value) {
-                emiCountCubit.homeLoanAmountSlider(state: state, homeLoanSliderValue: value, isCheck: false);
-              },
-              loanValue: (state.homeSliderValue ?? 0) <= (200.0 * 100000)
-                  ? ((double.parse(emiCountCubit.homeLoanController.text)) / 100000)
-                  : 200,
-              interval: 25,
-              max: 200,
-              min: 0,
-            ),
-            SizedBox(
-              height: 10.h,
-            ),
-            commonTextfile(
-              state: state,
-              controller: emiCountCubit.interestRateController,
-              hinttext: "Ex 2.5",
-              text: "Interest Rate",
-              onSubmitted: (value) {
-                emiCountCubit.interestRateSliderMethod(state: state, interestRateSlider: value);
-              },
-              suffixWidget: commonContainer(
-                width: 40.w,
-                borderColor: Colors.black,
-                height: 35.h,
-                horizontalPadding: 0.w,
-                withOpacity: 0.2,
-                text: Text(
-                  "%",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
-                ),
+          ),
+          sliderWidget(
+            onChanged: (value) {
+              emiCountCubit.homeLoanAmountSlider(
+                state: state,
+                homeLoanSliderValue: value,
+                isCheck: false,
+              );
+            },
+            loanValue: (state.homeSliderValue) <= (200.0 * 100000)
+                ? ((double.parse(emiCountCubit.homeLoanController.text)) / 100000)
+                : 200,
+            interval: 25,
+            labelFormatterCallback: (value, value1) {
+              return '${value.toInt()}L';
+            },
+            max: 200,
+            min: 0,
+          ),
+          SizedBox(
+            height: 10.h,
+          ),
+          commonTextfile(
+            state: state,
+            controller: emiCountCubit.interestRateController,
+            hinttext: "Ex 2.5",
+            text: "Interest Rate",
+            onSubmitted: (value) {
+              emiCountCubit.interestRateSliderMethod(state: state, interestRateSlider: value);
+            },
+            suffixWidget: commonContainer(
+              width: 40.w,
+              borderColor: Colors.black,
+              height: 35.h,
+              horizontalPadding: 0.w,
+              withOpacity: 0.2,
+              text: Text(
+                "%",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
               ),
             ),
-            sliderWidget(
-              state: state,
-              onChanged: (value) {
-                emiCountCubit.interestRateSliderMethod(state: state, interestRateSlider: "$value");
-              },
-              loanValue: double.parse(emiCountCubit.interestRateController.text) <= 20
-                  ? double.parse(emiCountCubit.interestRateController.text)
-                  : 20,
-              interval: 2.5,
-              max: 20,
-              min: 5,
-            ),
-            SizedBox(height: 10.h),
-            commonTextfile(
-              state: state,
-              controller: emiCountCubit.loanTenureController,
-              hinttext: "Ex 4",
-              text: "Loan Tenure",
-              onSubmitted: (value) {
-                state.yearAndMonthIndex == 0
-                    ? emiCountCubit.yearAndMonthSelect(
-                        state: state,
-                        yearAndMonthIndex: 0,
-                        value: value,
-                      )
-                    : emiCountCubit.yearAndMonthSelect(
-                        state: state,
-                        yearAndMonthIndex: 1,
-                        value: value,
-                      );
-
-                updateSliderValue();
-              },
-              suffixWidget: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: List.generate(
-                  2,
-                  (index) => InkWell(
-                    onTap: () {
-                      tenureIndex = index;
+          ),
+          sliderWidget(
+            onChanged: (value) {
+              emiCountCubit.interestRateSliderMethod(state: state, interestRateSlider: "$value");
+            },
+            loanValue: double.parse(emiCountCubit.interestRateController.text) <= 20
+                ? double.parse(emiCountCubit.interestRateController.text)
+                : 20,
+            interval: 2.5,
+            max: 20,
+            min: 5,
+          ),
+          SizedBox(
+            height: 10.h,
+          ),
+          commonTextfile(
+            state: state,
+            controller: emiCountCubit.loanTenureController,
+            hinttext: "Ex 4",
+            text: "Loan Tenure",
+            onSubmitted: (value) {
+              emiCountCubit.loanTenureController = TextEditingController(text: value);
+              emiCountCubit.yearAndMonthSelect(
+                checkTextFieldValue: true,
+                state: state,
+                check: state.checkMonthYear,
+                value: value,
+              );
+              updateSliderValue();
+            },
+            suffixWidget: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                InkWell(
+                  onTap: () {
+                    if (state.checkMonthYear == false) {
                       emiCountCubit.yearAndMonthSelect(
+                        checkTextFieldValue: false,
                         state: state,
-                        yearAndMonthIndex: index,
                         value: emiCountCubit.loanTenureController.text,
+                        check: true,
                       );
-                    },
-                    child: commonContainer(
-                      width: 40.w,
-                      height: 35.h,
-                      borderColor: Colors.black.withOpacity(0.5),
-                      horizontalPadding: 0.w,
-                      withOpacity: state.yearAndMonthIndex != index ? 0.15 : 0.75,
-                      text: Text(
-                        index == 0 ? "Yr" : "Mo",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
-                      ),
+                    }
+                  },
+                  child: commonContainer(
+                    width: 40.w,
+                    height: 35.h,
+                    borderColor: Colors.black.withOpacity(0.5),
+                    horizontalPadding: 0.w,
+                    withOpacity: state.checkMonthYear ? 0.75 : 0.15,
+                    text: Text(
+                      "Yr",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
                     ),
                   ),
                 ),
-              ),
-            ),
-            sliderWidget(
-              state: state,
-              onChanged: (value) {
-                emiCountCubit.loanTenureMethod(state: state, loanTenuresMonthSliderValues: value);
-              },
-              loanValue: state.yearAndMonthIndex == 0
-                  ? double.parse(emiCountCubit.loanTenureController.text) >= 30
-                      ? 30
-                      : double.parse(emiCountCubit.loanTenureController.text)
-                  : double.parse(emiCountCubit.loanTenureController.text) >= 360
-                      ? 360
-                      : double.parse(emiCountCubit.loanTenureController.text),
-              interval: state.yearAndMonthIndex == 0 ? 5 : 60,
-              max: state.yearAndMonthIndex == 0 ? 30 : 360,
-              min: 0,
-            ),
-            SizedBox(height: 20.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.w),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  commonContainer(
-                    horizontalPadding: 0,
-                    withOpacity: 0,
-                    height: 220.h,
-                    radius: 5.r,
-                    width: double.infinity,
-                    text: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Loan EMI",
-                          style: TextStyle(fontSize: 14.sp),
-                        ),
-                        Text(
-                          "₹${state.emi.toStringAsFixed(0)}",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
-                        ),
-                        const Divider(),
-                        Text(
-                          "Total Interest Payable",
-                          style: TextStyle(fontSize: 14.sp),
-                        ),
-                        Text(
-                          "₹${state.totalInterest.toStringAsFixed(0)}",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
-                        ),
-                        const Divider(),
-                        Text(
-                          "Total Payment \n(Principal + Interest)",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14.sp),
-                        ),
-                        Text(
-                          "₹${state.totalPayment.toStringAsFixed(0)}",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
-                        ),
-                      ],
+                InkWell(
+                  onTap: () {
+                    if (state.checkMonthYear == true) {
+                      emiCountCubit.yearAndMonthSelect(
+                        checkTextFieldValue: false,
+                        state: state,
+                        value: emiCountCubit.loanTenureController.text,
+                        check: false,
+                      );
+                    }
+                  },
+                  child: commonContainer(
+                    width: 40.w,
+                    height: 35.h,
+                    borderColor: Colors.black.withOpacity(0.5),
+                    horizontalPadding: 0.w,
+                    withOpacity: state.checkMonthYear == false ? 0.75 : 0.15,
+                    text: Text(
+                      "Mo",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),
                     ),
                   ),
-                  commonContainer(
-                    horizontalPadding: 0,
-                    withOpacity: 0,
-                    height: 220.h,
-                    radius: 5,
-                    width: double.infinity,
-                    text: PieChart(
-                      dataMap: dataMap,
-                      animationDuration: const Duration(milliseconds: 800),
-                      chartLegendSpacing: 10.h,
-                      chartRadius: 160.r,
-                      colorList: [
-                        Colors.green.shade800,
-                        Colors.orange.shade700,
-                      ],
-                      initialAngleInDegree: 275,
-                      chartType: ChartType.disc,
-                      ringStrokeWidth: 10,
-                      legendOptions: const LegendOptions(
-                        showLegendsInRow: true,
-                        legendPosition: LegendPosition.bottom,
-                        showLegends: true,
-                        legendShape: BoxShape.circle,
-                        legendTextStyle: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+                ),
+              ],
+            ),
+          ),
+          state.checkMonthYear == true
+              ? sliderWidget(
+                  onChanged: (value) {
+                    emiCountCubit.yearAndMonthSelect(
+                      state: state,
+                      check: state.checkMonthYear,
+                      checkTextFieldValue: true,
+                      value: "$value",
+                    );
+                  },
+                  loanValue: state.loanTenuresYearSlider >= 30 ? 30 : state.loanTenuresYearSlider,
+                  interval: 5,
+                  max: 30,
+                  min: 0,
+                )
+              : sliderWidget(
+                  onChanged: (value) {
+                    emiCountCubit.yearAndMonthSelect(
+                      state: state,
+                      check: state.checkMonthYear,
+                      checkTextFieldValue: true,
+                      value: "$value",
+                    );
+                  },
+                  loanValue: state.loanTenuresMonthSlider >= 360 ? 360 : state.loanTenuresMonthSlider,
+                  interval: 60,
+                  max: 360,
+                  min: 0,
+                ),
+          SizedBox(height: 20.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                commonContainer(
+                  horizontalPadding: 0,
+                  withOpacity: 0,
+                  height: 220.h,
+                  radius: 5.r,
+                  width: double.infinity,
+                  text: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Loan EMI",
+                        style: TextStyle(fontSize: 14.sp),
                       ),
-                      chartValuesOptions: const ChartValuesOptions(
-                        chartValueStyle: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                        showChartValueBackground: false,
-                        showChartValues: true,
-                        showChartValuesInPercentage: true,
-                        showChartValuesOutside: false,
-                        decimalPlaces: 2,
+                      Text(
+                        state.emi.formatCurrency(),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp),
+                      ),
+                      const Divider(),
+                      Text(
+                        "Total Interest Payable",
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                      Text(
+                        state.totalInterest.formatCurrency(),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
+                      ),
+                      const Divider(),
+                      Text(
+                        "Total Payment \n(Principal + Interest)",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14.sp),
+                      ),
+                      Text(
+                        state.totalPayment.formatCurrency(),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
+                      ),
+                    ],
+                  ),
+                ),
+                commonContainer(
+                  horizontalPadding: 0,
+                  withOpacity: 0,
+                  height: 220.h,
+                  radius: 5,
+                  width: double.infinity,
+                  text: PieChart(
+                    dataMap: dataMap,
+                    animationDuration: const Duration(milliseconds: 800),
+                    chartLegendSpacing: 10.h,
+                    chartRadius: 160.r,
+                    colorList: [
+                      Colors.green.shade800,
+                      Colors.orange.shade700,
+                    ],
+                    initialAngleInDegree: 275,
+                    chartType: ChartType.disc,
+                    ringStrokeWidth: 10,
+                    legendOptions: const LegendOptions(
+                      showLegendsInRow: true,
+                      legendPosition: LegendPosition.bottom,
+                      showLegends: true,
+                      legendShape: BoxShape.circle,
+                      legendTextStyle: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
+                    chartValuesOptions: const ChartValuesOptions(
+                      chartValueStyle: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                      showChartValueBackground: false,
+                      showChartValues: true,
+                      showChartValuesInPercentage: true,
+                      showChartValuesOutside: false,
+                      decimalPlaces: 2,
+                    ),
                   ),
-                  SizedBox(height: 20.h)
-                ],
-              ),
-            )
-          ],
-        ),
+                ),
+                SizedBox(height: 20.h)
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
@@ -353,22 +392,23 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
   }
 
   Widget sliderWidget({
-    required EmiCountLoadedState state,
     required void Function(dynamic)? onChanged,
     required double loanValue,
     required double interval,
     required double max,
     required double min,
+    String Function(dynamic, String)? labelFormatterCallback,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 9.w),
+      padding: EdgeInsets.symmetric(horizontal: 3.w),
       child: SfSlider(
         min: min,
         max: max,
         interval: interval,
         showLabels: true,
         showTicks: true,
-        onChangeEnd: (value) {
+        labelFormatterCallback: labelFormatterCallback,
+        onChangeEnd: (value) {  
           updateSliderValue();
         },
         inactiveColor: Colors.grey.shade400,
@@ -377,5 +417,12 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
         onChanged: onChanged,
       ),
     );
+  }
+}
+
+extension CurrencyFormatter on num {
+  String formatCurrency() {
+    final formatCurrency = NumberFormat.currency(symbol: '₹', locale: 'en_IN', decimalDigits: 0);
+    return formatCurrency.format(this);
   }
 }
