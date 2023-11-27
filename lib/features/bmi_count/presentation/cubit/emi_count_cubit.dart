@@ -25,45 +25,6 @@ class EmiCountCubit extends Cubit<EmiCountState> {
   TextEditingController loanTenureController = TextEditingController(text: "15");
   double emiCount = 0.0;
 
-  void yearAndMonthSelect({
-    required EmiCountLoadedState state,
-    required bool check,
-    required bool checkTextFieldValue,
-    required String value,
-  }) {
-    double year = state.loanTenuresYearSlider;
-    double month = state.loanTenuresMonthSlider;
-    String textValue = value;
-    if (check) {
-      year = 0;
-      if (checkTextFieldValue) {
-        year = (double.parse(textValue));
-        loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
-      } else {
-        year = (double.parse(textValue) / 12);
-        loanTenureController = TextEditingController(text: year.toStringAsFixed(1));
-      }
-    } else {
-      month = 0;
-      if (checkTextFieldValue) {
-        month = (double.parse(textValue));
-        loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
-      } else {
-        month = double.parse(textValue) * 12;
-        loanTenureController = TextEditingController(text: month.toStringAsFixed(0));
-      }
-    }
-
-    emit(
-      state.copyWith(
-        loanTenuresYearSlider: year,
-        loanTenuresMonthSlider: month,
-        checkMonthYear: check,
-        random: Random().nextDouble(),
-      ),
-    );
-  }
-
 //Emi Count Method
   void updateEmi({
     required int principal,
@@ -127,4 +88,46 @@ class EmiCountCubit extends Cubit<EmiCountState> {
       ),
     );
   }
+
+
+//LoanTenureSlider 
+  void yearAndMonthSelect({
+    required EmiCountLoadedState state,
+    required bool check,
+    required bool checkTextFieldValue,
+    required String value,
+  }) {
+    double year = state.loanTenuresYearSlider;
+    double month = state.loanTenuresMonthSlider;
+    String textValue = value;
+    if (check) {
+      year = 0;
+      if (checkTextFieldValue) {
+        year = (double.parse(textValue));
+        loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
+      } else {
+        year = (double.parse(textValue) / 12);
+        loanTenureController = TextEditingController(text: year.toStringAsFixed(1));
+      }
+    } else {
+      month = 0;
+      if (checkTextFieldValue) {
+        month = (double.parse(textValue));
+        loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
+      } else {
+        month = double.parse(textValue) * 12;
+        loanTenureController = TextEditingController(text: month.toStringAsFixed(0));
+      }
+    }
+
+    emit(
+      state.copyWith(
+        loanTenuresYearSlider: year,
+        loanTenuresMonthSlider: month,
+        checkMonthYear: check,
+        random: Random().nextDouble(),
+      ),
+    );
+  }
+
 }
