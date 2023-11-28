@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bmi_caclulator/di/get_it.dart';
-import 'package:bmi_caclulator/features/bmi_count/presentation/view/bmi_calculator/emi_calculator_screen.dart';
+import 'package:bmi_caclulator/features/bmi_count/presentation/view/emi_calculator/emi_calculator_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

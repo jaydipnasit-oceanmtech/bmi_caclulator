@@ -11,18 +11,17 @@ class EmiCountCubit extends Cubit<EmiCountState> {
             totalInterest: 0,
             checkMonthYear: true,
             totalPayment: 0,
-            loanTenuresMonthSlider: 120,
-            loanTenuresYearSlider: 10,
             piePrincipalLoanAmount: 0,
             emi: 0,
             pieInterest: 0,
-            homeSliderValue: 10,
-            interestRateSliderValue: 10,
           ),
         );
-  TextEditingController homeLoanController = TextEditingController(text: "5000000");
-  TextEditingController interestRateController = TextEditingController(text: "10");
-  TextEditingController loanTenureController = TextEditingController(text: "15");
+  TextEditingController homeLoanController = TextEditingController();
+  TextEditingController interestRateController = TextEditingController();
+  TextEditingController loanTenureController = TextEditingController();
+  final amountKey = GlobalKey<FormState>();
+  final loanTenureKey = GlobalKey<FormState>();
+  final intereastKey = GlobalKey<FormState>();
   double emiCount = 0.0;
 
 //Emi Count Method
@@ -30,7 +29,6 @@ class EmiCountCubit extends Cubit<EmiCountState> {
     required int principal,
     required double interestRate,
     required double tenure,
-
   }) {
     var loadedState = state as EmiCountLoadedState;
     double monthlyInterestRate = (interestRate / 12) / 100;
@@ -47,6 +45,7 @@ class EmiCountCubit extends Cubit<EmiCountState> {
     double totalPayment = emiCount * year;
     double piePrincipalLoanAmount = totalInterest / totalPayment * 100;
     double pieInterest = principal / totalPayment * 100;
+
     emit(
       loadedState.copyWith(
         emi: emiCount,
@@ -59,46 +58,15 @@ class EmiCountCubit extends Cubit<EmiCountState> {
     );
   }
 
-//HomeLoanAmountSlider
-  void homeLoanAmountSlider({
-    required EmiCountLoadedState state,
-    required double homeLoanSliderValue,
-    required bool isCheck,
-  }) {
-    if (isCheck) {
-      homeLoanController = TextEditingController(text: (homeLoanSliderValue).toStringAsFixed(0));
-    } else {
-      homeLoanController = TextEditingController(text: (homeLoanSliderValue * 100000).toStringAsFixed(0));
-    }
-    emit(state.copyWith(homeSliderValue: homeLoanSliderValue, random: Random().nextDouble()));
-  }
-
-//InTerestRatetSlider
-  void interestRateSliderMethod({
-    required EmiCountLoadedState state,
-    required String interestRateSlider,
-  }) {
-    interestRateController = TextEditingController(
-      text: double.parse(interestRateSlider).toStringAsFixed(1),
-    );
-    emit(
-      state.copyWith(
-        interestRateSliderValue: double.parse(interestRateSlider),
-        random: Random().nextDouble(),
-      ),
-    );
-  }
-
-
-//LoanTenureSlider 
+//Loan Tenure opetions
   void yearAndMonthSelect({
     required EmiCountLoadedState state,
     required bool check,
     required bool checkTextFieldValue,
     required String value,
   }) {
-    double year = state.loanTenuresYearSlider;
-    double month = state.loanTenuresMonthSlider;
+    double year;
+    double month;
     String textValue = value;
     if (check) {
       year = 0;
@@ -119,15 +87,11 @@ class EmiCountCubit extends Cubit<EmiCountState> {
         loanTenureController = TextEditingController(text: month.toStringAsFixed(0));
       }
     }
-
     emit(
       state.copyWith(
-        loanTenuresYearSlider: year,
-        loanTenuresMonthSlider: month,
         checkMonthYear: check,
         random: Random().nextDouble(),
       ),
     );
   }
-
 }
