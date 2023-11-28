@@ -71,20 +71,28 @@ class EmiCountCubit extends Cubit<EmiCountState> {
     if (check) {
       year = 0;
       if (checkTextFieldValue) {
-        year = (double.parse(textValue));
-        loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
+        if (textValue.isNotEmpty) {
+          year = (double.parse(textValue));
+          loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
+        }
       } else {
-        year = (double.parse(textValue) / 12);
-        loanTenureController = TextEditingController(text: year.toStringAsFixed(1));
+        if (textValue.isNotEmpty) {
+          year = (double.parse(textValue) / 12);
+          loanTenureController = TextEditingController(text: year.toStringAsFixed(1));
+        }
       }
     } else {
       month = 0;
-      if (checkTextFieldValue) {
-        month = (double.parse(textValue));
-        loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
+      if (checkTextFieldValue && loanTenureController.text.isEmpty) {
+        if (textValue.isNotEmpty) {
+          month = (double.parse(textValue));
+          loanTenureController = TextEditingController(text: double.parse(textValue).toStringAsFixed(0));
+        }
       } else {
-        month = double.parse(textValue) * 12;
-        loanTenureController = TextEditingController(text: month.toStringAsFixed(0));
+        if (textValue.isNotEmpty) {
+          month = double.parse(textValue) * 12;
+          loanTenureController = TextEditingController(text: month.toStringAsFixed(0));
+        }
       }
     }
     emit(

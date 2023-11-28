@@ -84,7 +84,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                     state: state,
                     tex: 'Yr',
                     onTap: () {
-                      if (state.checkMonthYear == false && emiCountCubit.loanTenureController.text.isNotEmpty) {
+                      if (state.checkMonthYear == false) {
                         emiCountCubit.yearAndMonthSelect(
                           checkTextFieldValue: false,
                           state: state,
@@ -102,7 +102,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       onTap: () {
-                        if (state.checkMonthYear == true && emiCountCubit.loanTenureController.text.isNotEmpty) {
+                        if (state.checkMonthYear == true) {
                           emiCountCubit.yearAndMonthSelect(
                             checkTextFieldValue: false,
                             state: state,
