@@ -37,7 +37,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
               "₹",
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.grey.shade700,
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 18.sp,
               ),
@@ -177,7 +177,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                 emiCountCubit.isShowResult(isShowData: false);
               },
               text: "Reset",
-              textColors: Colors.black.withOpacity(0.5),
+              textColors: Colors.grey.withOpacity(0.8),
             ),
             commonButton(
               bgColor: const Color(0XFF084277),
@@ -250,7 +250,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
         child: TextFormField(
           validator: validator,
           onChanged: onChange,
-          style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold, fontSize: 18.sp),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18.sp),
           controller: controller,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
@@ -407,7 +407,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
           width: 15.w,
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(3.r), color: color),
         ),
-        SizedBox(width: 5.w),
+        SizedBox(width: 7.w),
         Text(
           text,
           style: TextStyle(

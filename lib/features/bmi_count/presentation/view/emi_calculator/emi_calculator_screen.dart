@@ -16,6 +16,7 @@ class _EmiCalculatorScreenState extends EmiCalculatorWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0XFF084277),
         leading: Icon(

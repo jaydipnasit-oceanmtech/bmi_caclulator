@@ -39,8 +39,6 @@ dependencies:
   equatable: ^2.0.5
   flutter_screenutil: ^5.9.0
   get_it: ^7.6.4
-  syncfusion_flutter_sliders: ^23.2.4
-  pie_chart: ^5.4.0
   intl: ^0.18.1
  
 
