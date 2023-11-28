@@ -52,7 +52,6 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
           children: [
             Expanded(
               child: commonTextfile(
-                maxLength: state.checkMonthYear == true ? 3 : 4,
                 formKey: emiCountCubit.loanTenureKey,
                 onChange: (value) {
                   emiCountCubit.loanTenureKey.currentState!.validate();
@@ -124,7 +123,6 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
         ),
         commonTextfile(
           formKey: emiCountCubit.intereastKey,
-          maxLength: 3,
           onChange: (value) {
             emiCountCubit.intereastKey.currentState!.validate();
           },
@@ -218,7 +216,6 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
       {required TextEditingController controller,
       required String hinttext,
       Widget? suffixIconWidget,
-      int? maxLength,
       required Key formKey,
       required String? Function(String?)? validator,
       required void Function(String)? onChange}) {
@@ -231,7 +228,6 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
           onChanged: onChange,
           controller: controller,
           keyboardType: TextInputType.number,
-          maxLength: maxLength,
           decoration: InputDecoration(
               counterText: "",
               suffixIcon: suffixIconWidget,
