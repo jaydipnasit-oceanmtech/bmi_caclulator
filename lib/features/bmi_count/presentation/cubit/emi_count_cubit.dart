@@ -11,6 +11,7 @@ class EmiCountCubit extends Cubit<EmiCountState> {
             totalInterest: 0,
             checkMonthYear: true,
             totalPayment: 0,
+            isShowData: false,
             piePrincipalLoanAmount: 0,
             emi: 0,
             pieInterest: 0,
@@ -101,5 +102,10 @@ class EmiCountCubit extends Cubit<EmiCountState> {
         random: Random().nextDouble(),
       ),
     );
+  }
+
+  void isShowResult({required bool isShowData}) {
+    var loadedState = state as EmiCountLoadedState;
+    emit(loadedState.copyWith(isShowData: isShowData));
   }
 }

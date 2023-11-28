@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 
 abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
   late EmiCountCubit emiCountCubit;
-
   @override
   void initState() {
     emiCountCubit = getItInstance<EmiCountCubit>();
@@ -26,15 +25,30 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
       children: [
         Text(
           'Loan Amount',
-          style: TextStyle(fontSize: 12.sp, color: Colors.black, fontWeight: FontWeight.w400),
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: Colors.black,
+          ),
         ),
         commonTextfile(
+          perffixIconWidget: Padding(
+            padding: EdgeInsets.only(left: 10.w, right: 4.w),
+            child: Text(
+              "₹",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey.shade700,
+                fontWeight: FontWeight.bold,
+                fontSize: 18.sp,
+              ),
+            ),
+          ),
           formKey: emiCountCubit.amountKey,
           onChange: (value) {
             emiCountCubit.amountKey.currentState!.validate();
           },
           controller: emiCountCubit.homeLoanController,
-          hinttext: "₹ 5000000",
+          hinttext: "5000000",
           validator: (value) {
             if (value!.isEmpty) {
               return "Enter Amount";
@@ -71,46 +85,50 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
               height: 50.h,
               width: 110.w,
               decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10.r),
               ),
               child: Row(
                 children: [
-                  commonLoanTenureOptions(
-                    boxDecoration: BoxDecoration(
-                      color: state.checkMonthYear == true ? Colors.white : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    state: state,
-                    tex: 'Yr',
-                    onTap: () {
-                      if (state.checkMonthYear == false) {
-                        emiCountCubit.yearAndMonthSelect(
-                          checkTextFieldValue: false,
-                          state: state,
-                          value: emiCountCubit.loanTenureController.text,
-                          check: true,
-                        );
-                      }
-                    },
-                  ),
-                  commonLoanTenureOptions(
-                      state: state,
-                      tex: 'Mo',
+                  Expanded(
+                    child: commonLoanTenureOptions(
                       boxDecoration: BoxDecoration(
-                        color: state.checkMonthYear == false ? Colors.white : Colors.transparent,
-                        borderRadius: BorderRadius.circular(10.r),
+                        color: state.checkMonthYear == true ? Colors.white : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8.r),
                       ),
+                      state: state,
+                      text: 'Yr',
                       onTap: () {
-                        if (state.checkMonthYear == true) {
+                        if (state.checkMonthYear == false) {
                           emiCountCubit.yearAndMonthSelect(
                             checkTextFieldValue: false,
                             state: state,
                             value: emiCountCubit.loanTenureController.text,
-                            check: false,
+                            check: true,
                           );
                         }
-                      }),
+                      },
+                    ),
+                  ),
+                  Expanded(
+                    child: commonLoanTenureOptions(
+                        state: state,
+                        text: 'Mo',
+                        boxDecoration: BoxDecoration(
+                          color: state.checkMonthYear == false ? Colors.white : Colors.transparent,
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        onTap: () {
+                          if (state.checkMonthYear == true) {
+                            emiCountCubit.yearAndMonthSelect(
+                              checkTextFieldValue: false,
+                              state: state,
+                              value: emiCountCubit.loanTenureController.text,
+                              check: false,
+                            );
+                          }
+                        }),
+                  ),
                 ],
               ),
             )
@@ -143,7 +161,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
             withOpacity: 0.2,
             text: Text(
               "%",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp, color: Colors.grey),
+              style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black.withOpacity(0.5), fontSize: 18.sp),
             ),
           ),
         ),
@@ -151,14 +169,15 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
         Row(
           children: [
             commonButton(
-              bgColor: Colors.grey.shade300,
+              bgColor: Colors.grey.withOpacity(0.2),
               onPressed: () {
                 emiCountCubit.homeLoanController.clear();
                 emiCountCubit.interestRateController.clear();
                 emiCountCubit.loanTenureController.clear();
+                emiCountCubit.isShowResult(isShowData: false);
               },
               text: "Reset",
-              textColors: Colors.grey.shade800,
+              textColors: Colors.black.withOpacity(0.5),
             ),
             commonButton(
               bgColor: const Color(0XFF084277),
@@ -172,17 +191,18 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                     tenure: double.parse(emiCountCubit.loanTenureController.text),
                   );
                   FocusManager.instance.primaryFocus?.unfocus();
+                  emiCountCubit.isShowResult(isShowData: true);
                 }
               },
               text: "Calculate",
-              textColors: const Color(0xffFFFFFF),
+              textColors: Colors.white,
             ),
           ],
         ),
         SizedBox(
           height: 90.h,
         ),
-        calculateResultContainer(state: state)
+        state.isShowData ? calculateResultContainer(state: state) : const SizedBox.shrink(),
       ],
     );
   }
@@ -190,7 +210,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
   /// CommonLoanTenureOpptions
   Widget commonLoanTenureOptions({
     required EmiCountLoadedState state,
-    required String tex,
+    required String text,
     required VoidCallback onTap,
     Decoration? boxDecoration,
   }) {
@@ -198,27 +218,31 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
       overlayColor: MaterialStateProperty.all(Colors.transparent),
       onTap: onTap,
       child: Container(
-        height: 50.h,
-        width: 50.w,
         margin: EdgeInsets.all(2.r),
         decoration: boxDecoration,
-        child: Center(
-            child: Text(
-          tex,
-          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
-        )),
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w700,
+            color: Colors.black.withOpacity(0.5),
+          ),
+        ),
       ),
     );
   }
 
   /// CommonTextFile
-  Widget commonTextfile(
-      {required TextEditingController controller,
-      required String hinttext,
-      Widget? suffixIconWidget,
-      required Key formKey,
-      required String? Function(String?)? validator,
-      required void Function(String)? onChange}) {
+  Widget commonTextfile({
+    required TextEditingController controller,
+    required String hinttext,
+    Widget? suffixIconWidget,
+    Widget? perffixIconWidget,
+    required Key formKey,
+    required String? Function(String?)? validator,
+    required void Function(String)? onChange,
+  }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 3.w),
       child: Form(
@@ -226,11 +250,16 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
         child: TextFormField(
           validator: validator,
           onChanged: onChange,
+          style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.bold, fontSize: 18.sp),
           controller: controller,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
               counterText: "",
+              prefixIcon: perffixIconWidget,
               suffixIcon: suffixIconWidget,
+              prefixIconConstraints: BoxConstraints(
+                minWidth: 10.w,
+              ),
               contentPadding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 12.h),
               fillColor: Colors.white,
               filled: true,
@@ -251,7 +280,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                 borderSide: const BorderSide(color: Color(0XFF084277)),
               ),
               hintText: hinttext,
-              hintStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade700, fontSize: 18.sp)),
+              hintStyle: TextStyle(color: Colors.grey.withOpacity(0.5), fontSize: 18.sp)),
         ),
       ),
     );
@@ -280,13 +309,16 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                     children: [
                       Text(
                         "Principle Amount",
-                        style: TextStyle(fontSize: 14.sp, color: Colors.grey, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.black,
+                        ),
                       ),
                       Text(
-                        "₹ ${emiCountCubit.homeLoanController.text}",
+                        double.parse(emiCountCubit.homeLoanController.text).formatCurrency(),
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade700,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
                         ),
                       ),
@@ -324,16 +356,17 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                 children: [
                   Text(
                     'Your EMI is ',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500, color: const Color.fromARGB(255, 22, 17, 17), fontSize: 14.sp),
+                    style:
+                        TextStyle(fontWeight: FontWeight.w500, color: Colors.black.withOpacity(0.4), fontSize: 12.sp),
                   ),
                   Text(
                     state.emi.formatCurrency(),
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20.sp),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 22.sp),
                   ),
                   Text(
                     'per month',
-                    style: TextStyle(fontWeight: FontWeight.w500, color: Colors.grey.shade700, fontSize: 14.sp),
+                    style:
+                        TextStyle(fontWeight: FontWeight.w500, color: Colors.black.withOpacity(0.4), fontSize: 12.sp),
                   )
                 ],
               ),
@@ -377,10 +410,20 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
         SizedBox(width: 5.w),
         Text(
           text,
-          style: TextStyle(fontSize: 14.sp, color: Colors.grey, fontWeight: FontWeight.w400),
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: Colors.black,
+          ),
         ),
         const Spacer(),
-        Text(amounText, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade700, fontSize: 16.sp)),
+        Text(
+          amounText,
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            fontSize: 16.sp,
+          ),
+        ),
       ],
     );
   }
@@ -427,12 +470,13 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
         textColor: textColors,
         elevation: 0,
         color: bgColor,
+        highlightElevation: 0,
         height: 48.h,
         minWidth: 155.w,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.r)),
         child: Text(
           text,
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w400),
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
           textAlign: TextAlign.center,
         ),
       ),
