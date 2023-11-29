@@ -202,7 +202,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                 emiCountCubit.isShowResult(isShowData: false);
               },
               text: "Reset",
-              textColors: Colors.grey.withOpacity(0.8),
+              textColors: Colors.black.withOpacity(0.8),
             ),
             commonButton(
               bgColor: const Color(0XFF084277),
@@ -251,7 +251,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
           style: TextStyle(
             fontSize: 14.sp,
             fontWeight: FontWeight.w700,
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black,
           ),
         ),
       ),
