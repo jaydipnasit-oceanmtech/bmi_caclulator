@@ -89,11 +89,11 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                     final enteredValue = double.parse(value);
                     if (state.checkMonthYear) {
                       if (enteredValue < 0 || enteredValue > 40) {
-                        return "Year: Max 40 ";
+                        return "Year: Max 40 & Month: Max 480 ";
                       }
                     } else {
                       if (enteredValue < 0 || enteredValue > 480) {
-                        return "Month: Max 480";
+                        return "Year: Max 40 & Month: Max 480 ";
                       }
                     }
                   }
