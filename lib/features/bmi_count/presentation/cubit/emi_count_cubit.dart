@@ -69,6 +69,7 @@ class EmiCountCubit extends Cubit<EmiCountState> {
     double year;
     double month;
     String textValue = value;
+
     if (check) {
       year = 0;
       if (checkTextFieldValue) {

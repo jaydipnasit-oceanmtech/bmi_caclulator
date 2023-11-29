@@ -14,49 +14,52 @@ class EmiCalculatorScreen extends StatefulWidget {
 class _EmiCalculatorScreenState extends EmiCalculatorWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0XFF084277),
-        leading: Icon(
-          Icons.arrow_back_ios,
-          size: 18.sp,
-          color: const Color(0XFFFFFFFF),
-        ),
-        centerTitle: false,
-        titleSpacing: 0,
-        title: Text(
-          'Loan Emi Calculator',
-          style: TextStyle(
-            fontSize: 14.sp,
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: const Color(0XFF084277),
+          leading: Icon(
+            Icons.arrow_back_ios,
+            size: 18.sp,
             color: const Color(0XFFFFFFFF),
-            fontWeight: FontWeight.w400,
+          ),
+          centerTitle: false,
+          titleSpacing: 0,
+          title: Text(
+            'Loan Emi Calculator',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: const Color(0XFFFFFFFF),
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
-      ),
-      body: BlocBuilder(
-        bloc: emiCountCubit,
-        builder: (context, state) {
-          if (state is EmiCountLoadedState) {
-            return SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(12.r),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    loanAmoutWidget(state: state),
-                  ],
+        body: BlocBuilder(
+          bloc: emiCountCubit,
+          builder: (context, state) {
+            if (state is EmiCountLoadedState) {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(12.r),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      loanAmoutWidget(state: state),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          } else if (state is EmiCountLoadingState) {
+              );
+            } else if (state is EmiCountLoadingState) {
+              return const SizedBox.shrink();
+            } else if (state is EmiCountErrorState) {
+              return Center(child: Text(state.errorMessage));
+            }
             return const SizedBox.shrink();
-          } else if (state is EmiCountErrorState) {
-            return Center(child: Text(state.errorMessage));
-          }
-          return const SizedBox.shrink();
-        },
+          },
+        ),
       ),
     );
   }

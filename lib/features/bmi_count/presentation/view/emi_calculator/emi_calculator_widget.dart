@@ -67,7 +67,17 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
             Expanded(
               child: commonTextfile(
                 formKey: emiCountCubit.loanTenureKey,
+                maxLength: 3,
                 onChange: (value) {
+                  // if (emiCountCubit.loanTenureController.text.isNotEmpty) {
+                  //   final enteredValue = double.parse(value);
+                  //   if (state.checkMonthYear) {
+                  //     if (enteredValue < 0 || enteredValue > 40) {}
+                  //   } else {
+                  //     if (enteredValue < 0 || enteredValue > 480) {}
+                  //   }
+                  // }
+
                   emiCountCubit.loanTenureKey.currentState!.validate();
                 },
                 controller: emiCountCubit.loanTenureController,
@@ -75,6 +85,17 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                 validator: (value) {
                   if (value!.isEmpty) {
                     return "Enter Loan Tenure";
+                  } else if (emiCountCubit.loanTenureController.text.isNotEmpty) {
+                    final enteredValue = double.parse(value);
+                    if (state.checkMonthYear) {
+                      if (enteredValue < 0 || enteredValue > 40) {
+                        return "Year: Max 40 ";
+                      }
+                    } else {
+                      if (enteredValue < 0 || enteredValue > 480) {
+                        return "Month: Max 480";
+                      }
+                    }
                   }
                   return null;
                 },
@@ -161,7 +182,11 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
             withOpacity: 0.2,
             text: Text(
               "%",
-              style: TextStyle(fontWeight: FontWeight.w700, color: Colors.black.withOpacity(0.5), fontSize: 18.sp),
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                color: Colors.black.withOpacity(0.5),
+                fontSize: 18.sp,
+              ),
             ),
           ),
         ),
@@ -240,6 +265,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
     Widget? suffixIconWidget,
     Widget? perffixIconWidget,
     required Key formKey,
+    int? maxLength,
     required String? Function(String?)? validator,
     required void Function(String)? onChange,
   }) {
@@ -249,6 +275,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
         key: formKey,
         child: TextFormField(
           validator: validator,
+          maxLength: maxLength,
           onChanged: onChange,
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18.sp),
           controller: controller,
@@ -293,7 +320,7 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
       clipBehavior: Clip.none,
       children: [
         Container(
-            height: 200.h,
+            height: 225.h,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10.r),
@@ -305,25 +332,18 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Principle Amount",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        double.parse(emiCountCubit.homeLoanController.text).formatCurrency(),
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16.sp,
-                        ),
-                      ),
+                      principleAmountChart(text: "Principle Amount", color: const Color(0xffDCE8F3)),
+                      SizedBox(width: 15.w),
+                      principleAmountChart(text: "Interest Amount", color: const Color(0XFF084277)),
                     ],
                   ),
+                  SizedBox(height: 20.h),
+                  totalInterestWidget(
+                      amounText: double.parse(emiCountCubit.homeLoanController.text).formatCurrency(),
+                      text: "Principle Amount",
+                      color: const Color(0xffDCE8F3)),
                   Divider(height: 15.h),
                   totalInterestWidget(
                       amounText: state.totalInterest.formatCurrency(),
@@ -342,34 +362,37 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
             )),
         Positioned(
           top: -65.h,
-          bottom: 130.h,
+          bottom: 160.h,
           left: 0,
           right: 0,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 0.h),
-            child: CircleAvatar(
-              radius: 20.r,
-              backgroundColor: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Your EMI is ',
-                    style:
-                        TextStyle(fontWeight: FontWeight.w500, color: Colors.black.withOpacity(0.4), fontSize: 12.sp),
+          child: CircleAvatar(
+            radius: 20.r,
+            backgroundColor: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Your EMI is ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black.withOpacity(0.4),
+                    fontSize: 12.sp,
                   ),
-                  Text(
-                    state.emi.formatCurrency(),
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 22.sp),
+                ),
+                Text(
+                  state.emi.formatCurrency(),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 22.sp),
+                ),
+                Text(
+                  'per month',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black.withOpacity(0.4),
+                    fontSize: 12.sp,
                   ),
-                  Text(
-                    'per month',
-                    style:
-                        TextStyle(fontWeight: FontWeight.w500, color: Colors.black.withOpacity(0.4), fontSize: 12.sp),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
         ),
@@ -377,9 +400,9 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
           bottom: 0,
           right: 0,
           left: 0,
-          top: -195.h,
+          top: -233.h,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 90.w, vertical: 125.h),
+            padding: EdgeInsets.symmetric(horizontal: 100.w, vertical: 168.h),
             child: CircularProgressIndicator(
               value: !state.emi.isNaN ? state.pieInterest / 100 : 1.0,
               strokeCap: StrokeCap.round,
@@ -389,7 +412,27 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
             ),
           ),
         ),
-        SizedBox(height: 20.h)
+      ],
+    );
+  }
+
+  Widget principleAmountChart({required Color color, required String text}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          height: 5.h,
+          width: 15.w,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.r), color: color),
+        ),
+        SizedBox(width: 3.w),
+        Text(
+          text,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 11.sp,
+          ),
+        ),
       ],
     );
   }
@@ -402,12 +445,6 @@ abstract class EmiCalculatorWidget extends State<EmiCalculatorScreen> {
   }) {
     return Row(
       children: [
-        Container(
-          height: 15.h,
-          width: 15.w,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(3.r), color: color),
-        ),
-        SizedBox(width: 7.w),
         Text(
           text,
           style: TextStyle(
